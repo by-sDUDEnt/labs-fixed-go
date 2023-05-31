@@ -5,13 +5,13 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-	redis2 "github.com/redis/go-redis/v9"
-	"go-labs-game-platform/internal/services/redis"
+	"github.com/redis/go-redis/v9"
+	"go-labs-game-platform/internal/services/cache"
 )
 
-func (i Impl) ListenPackets(ctx context.Context, roomID uuid.UUID, userID uuid.UUID) (<-chan *redis2.Message, error) {
-	fmt.Println("listen packets", redis.RoomUserChannelID(roomID, userID))
-	subscribe, err := i.redis.Subscribe(ctx, redis.RoomUserChannelID(roomID, userID))
+func (i Impl) ListenPackets(ctx context.Context, roomID uuid.UUID, userID uuid.UUID) (<-chan *redis.Message, error) {
+	fmt.Println("listen packets", cache.RoomUserChannelID(roomID, userID))
+	subscribe, err := i.cache.Subscribe(ctx, cache.RoomUserChannelID(roomID, userID))
 	if err != nil {
 		return nil, err
 	}

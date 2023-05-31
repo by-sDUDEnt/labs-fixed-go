@@ -1,4 +1,4 @@
-package redis
+package cache
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func (r Redis) Set(ctx context.Context, key string, val any, exp time.Duration) error {
+func (r Impl) Set(ctx context.Context, key string, val any, exp time.Duration) error {
 	jsonData, err := json.Marshal(val)
 	if err != nil {
 		return err
@@ -15,7 +15,7 @@ func (r Redis) Set(ctx context.Context, key string, val any, exp time.Duration) 
 	return r.cli.Set(ctx, key, jsonData, exp).Err()
 }
 
-func (r Redis) HSet(ctx context.Context, key string, id, val any) error {
+func (r Impl) HSet(ctx context.Context, key string, id, val any) error {
 	valJSON, err := json.Marshal(val)
 	if err != nil {
 		return err

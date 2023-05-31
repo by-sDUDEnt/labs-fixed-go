@@ -1,8 +1,8 @@
-package redis
+package cache
 
 import "context"
 
-func (r Redis) Del(ctx context.Context, key string) error {
+func (r Impl) Del(ctx context.Context, key string) error {
 	result := r.cli.Del(ctx, key)
 	if result.Err() != nil {
 		return result.Err()
@@ -11,7 +11,7 @@ func (r Redis) Del(ctx context.Context, key string) error {
 	return nil
 }
 
-func (r Redis) HDel(ctx context.Context, key string, fields ...string) error {
+func (r Impl) HDel(ctx context.Context, key string, fields ...string) error {
 	result := r.cli.HDel(ctx, key, fields...)
 	if result.Err() != nil {
 		return result.Err()

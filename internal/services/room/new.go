@@ -4,9 +4,9 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	redis2 "github.com/redis/go-redis/v9"
+	"github.com/redis/go-redis/v9"
 	"go-labs-game-platform/internal/models"
-	"go-labs-game-platform/internal/services/redis"
+	"go-labs-game-platform/internal/services/cache"
 )
 
 type Service interface {
@@ -17,21 +17,15 @@ type Service interface {
 	Leave(ctx context.Context, userID, roomID uuid.UUID) error
 
 	HandlePacket(ctx context.Context, userID uuid.UUID, roomID uuid.UUID, msg []byte) error
-	ListenPackets(ctx context.Context, roomID uuid.UUID, userID uuid.UUID) (<-chan *redis2.Message, error)
-}
-
-type Repo interface {
-	//UserByID(ctx context.Context, uuid uuid.UUID) (*models.User, error)
+	ListenPackets(ctx context.Context, roomID uuid.UUID, userID uuid.UUID) (<-chan *redis.Message, error)
 }
 
 type Impl struct {
-	repo  Repo
-	redis redis.Redis
+	cache cache.Service
 }
 
-func New(repo Repo, redis redis.Redis) *Impl {
+func New(cache cache.Service) *Impl {
 	return &Impl{
-		repo:  repo,
-		redis: redis,
+		cache: cache,
 	}
 }

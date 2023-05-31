@@ -9,7 +9,7 @@ package bootstrap
 import (
 	"go-labs-game-platform/internal/repository/postgres"
 	"go-labs-game-platform/internal/services/auth"
-	"go-labs-game-platform/internal/services/redis"
+	"go-labs-game-platform/internal/services/cache"
 	"go-labs-game-platform/internal/services/room"
 	"go-labs-game-platform/internal/services/user"
 )
@@ -17,7 +17,7 @@ import (
 // Injectors from wire.go:
 
 func Up() (*Dependencies, error) {
-	redisRedis, err := redis.New()
+	impl, err := cache.New()
 	if err != nil {
 		return nil, err
 	}
@@ -25,9 +25,9 @@ func Up() (*Dependencies, error) {
 	if err != nil {
 		return nil, err
 	}
-	impl := auth.New(repo)
+	authImpl := auth.New(repo)
 	userImpl := user.New(repo)
-	roomImpl := room.New(repo, redisRedis)
-	dependencies := NewDependencies(redisRedis, impl, userImpl, roomImpl)
+	roomImpl := room.New(impl)
+	dependencies := NewDependencies(impl, authImpl, userImpl, roomImpl)
 	return dependencies, nil
 }

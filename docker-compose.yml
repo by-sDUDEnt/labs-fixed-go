@@ -18,6 +18,32 @@ services:
       - "6379:6379"
     volumes:
       - redis-data:/data
+#  go-service:
+#
+#    links:
+#      - db
+#      - redis
+#    image: bysdudent/go-service:0.1
+#    environment:
+#      DB_HOST: db
+#      DB_PORT: 5432
+#      DB_USER: go-user
+#      DB_PASSWORD: go-password
+#      DB_NAME: go-db
+#      REDIS_HOST: redis
+#      REDIS_PORT: 6379
+#    pull_policy: always
+#    restart: always
+#    ports:
+#      - "8080:8080"
+#  client:
+#    image: bysdudent/go-client:0.5
+#    pull_policy: always
+#    restart: always
+#    ports:
+#      - "80:80"
+
+
 
 
 

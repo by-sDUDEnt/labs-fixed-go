@@ -1,11 +1,11 @@
-package redis
+package cache
 
 import (
 	"context"
 	"encoding/json"
 )
 
-func (r Redis) Get(ctx context.Context, key string, dest any) error {
+func (r Impl) Get(ctx context.Context, key string, dest any) error {
 	result := r.cli.Get(ctx, key)
 	if result.Err() != nil {
 		return result.Err()
@@ -20,7 +20,7 @@ func (r Redis) Get(ctx context.Context, key string, dest any) error {
 	return nil
 }
 
-func (r Redis) HGetAll(ctx context.Context, key string) (map[string]string, error) {
+func (r Impl) HGetAll(ctx context.Context, key string) (map[string]string, error) {
 	result := r.cli.HGetAll(ctx, key)
 	if result.Err() != nil {
 		return nil, result.Err()

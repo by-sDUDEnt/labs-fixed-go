@@ -3,16 +3,17 @@ package room
 import (
 	"context"
 	"fmt"
+
 	"github.com/google/uuid"
 	"go-labs-game-platform/internal/models"
-	"go-labs-game-platform/internal/services/redis"
+	"go-labs-game-platform/internal/services/cache"
 )
 
-func (i Impl) startGame(ctx context.Context, userID uuid.UUID, roomID uuid.UUID) error {
+func (i Impl) StartGame(ctx context.Context, roomID uuid.UUID) error {
 	var room models.Room
 
-	if err := i.redis.Get(ctx, redis.RoomID(roomID), &room); err != nil {
-		return fmt.Errorf("redis.Get: %w", err)
+	if err := i.cache.Get(ctx, cache.RoomID(roomID), &room); err != nil {
+		return fmt.Errorf("cache.Get: %w", err)
 	}
 
 	if !room.CanBeStarted() {
@@ -21,9 +22,7 @@ func (i Impl) startGame(ctx context.Context, userID uuid.UUID, roomID uuid.UUID)
 
 	room.Status = models.GameStatusInProgress
 
-	//firstMovePlayerID := room.PlayerIDs[rand.Intn(1)] TODO revert
 	firstMovePlayerID := room.PlayerIDs[0]
-	fmt.Println("publish packet", redis.RoomUserChannelID(roomID, userID))
 
 	startPacket := ServerStartPacket{
 		Packet: Packet{
@@ -38,7 +37,7 @@ func (i Impl) startGame(ctx context.Context, userID uuid.UUID, roomID uuid.UUID)
 	}
 
 	room.CurrentMovePlayerID = firstMovePlayerID
-	room.NextMovePlayerID = room.PlayerIDs[1] // TODO change to oposite player
+	room.NextMovePlayerID = room.PlayerIDs[1]
 
 	if err := i.saveRoom(ctx, &room); err != nil {
 		return err

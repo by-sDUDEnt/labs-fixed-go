@@ -1,4 +1,4 @@
-package redis
+package cache
 
 import (
 	"context"
@@ -8,13 +8,13 @@ import (
 	"github.com/redis/go-redis/v9"
 )
 
-func (r Redis) Subscribe(ctx context.Context, channel string) (<-chan *redis.Message, error) {
+func (r Impl) Subscribe(ctx context.Context, channel string) (<-chan *redis.Message, error) {
 	sub := r.cli.Subscribe(ctx, channel)
 
 	return sub.Channel(), nil
 }
 
-func (r Redis) Publish(ctx context.Context, channel string, message any) error {
+func (r Impl) Publish(ctx context.Context, channel string, message any) error {
 	messageJSON, err := json.Marshal(message)
 	if err != nil {
 		return fmt.Errorf("json.Marshal: %w", err)

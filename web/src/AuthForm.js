@@ -45,7 +45,7 @@ function AuthForm({onAuth}) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        const authEndpoint = isSignUp ? 'http://localhost:8080/api/v1/register' : 'http://localhost:8080/api/v1/login';
+        const authEndpoint = isSignUp ? 'http://go-service:8080/api/v1/register' : 'http://go-service:8080/api/v1/login';
         let auth = {status: false, id: null, username: null}
         fetch(authEndpoint, {
             method: 'POST',

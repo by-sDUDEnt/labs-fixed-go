@@ -6,17 +6,16 @@ import (
 
 	"github.com/google/uuid"
 	"go-labs-game-platform/internal/models"
-	"go-labs-game-platform/internal/services/redis"
+	"go-labs-game-platform/internal/services/cache"
 )
 
-func (i Impl) move(ctx context.Context, userID uuid.UUID, id uuid.UUID, move ClientMovePacket) error {
+func (i Impl) Move(ctx context.Context, userID uuid.UUID, id uuid.UUID, move ClientMovePacket) error {
 	var room models.Room
 
-	if err := i.redis.Get(ctx, redis.RoomID(id), &room); err != nil {
+	if err := i.cache.Get(ctx, cache.RoomID(id), &room); err != nil {
 		return err
 	}
 
-	// check if user is in room
 	if !room.ContainsPlayer(userID) {
 		return ErrRoomDoesNotContainPlayer
 	}
@@ -67,27 +66,12 @@ func (i Impl) move(ctx context.Context, userID uuid.UUID, id uuid.UUID, move Cli
 		return fmt.Errorf("saveRoom: %w", err)
 	}
 
-	// check win
-
-	//if rand.Intn(1) == 1 {
-	//	room.Status = models.GameStatusFinished
-	//
-	//	for _, d := range room.PlayerIDs {
-	//		i.redis.Publish(ctx, redis.RoomUserChannelID(room.ID, d), EndPacket{
-	//			Packet: Packet{
-	//				Type: PacketTypeEnd,
-	//			},
-	//			WinPlayerID: room.PlayerIDs[0],
-	//		})
-	//	}
-	//}
-
 	return nil
 }
 
 func (i Impl) Broadcast(ctx context.Context, room *models.Room, packet any) error {
 	for _, playerID := range room.PlayerIDs {
-		if err := i.redis.Publish(ctx, redis.RoomUserChannelID(room.ID, playerID), packet); err != nil {
+		if err := i.cache.Publish(ctx, cache.RoomUserChannelID(room.ID, playerID), packet); err != nil {
 			return fmt.Errorf("broadcast: %w", err)
 		}
 	}

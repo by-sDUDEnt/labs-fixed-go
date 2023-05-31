@@ -24,7 +24,7 @@ func (i Impl) HandlePacket(ctx context.Context, userID uuid.UUID, roomID uuid.UU
 			return fmt.Errorf("json.Unmarshal: %w", err)
 		}
 
-		if err = i.startGame(ctx, userID, roomID); err != nil {
+		if err = i.StartGame(ctx, roomID); err != nil {
 			return fmt.Errorf("roomSrv.startGame: %w", err)
 		}
 
@@ -36,7 +36,7 @@ func (i Impl) HandlePacket(ctx context.Context, userID uuid.UUID, roomID uuid.UU
 			return fmt.Errorf("json.Unmarshal: %w", err)
 		}
 
-		if err = i.move(ctx, userID, roomID, clientMovePacket); err != nil {
+		if err = i.Move(ctx, userID, roomID, clientMovePacket); err != nil {
 			return fmt.Errorf("roomSrv.move: %w", err)
 		}
 	}
